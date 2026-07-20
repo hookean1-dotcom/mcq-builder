@@ -81,8 +81,9 @@
     <h2 class="sec">Images</h2>
     <div class="field" style="margin-top:2px">
       <select id="imgMode" onchange="onImgModeChange()" style="flex:1;padding:6px;border:1px solid var(--line);border-radius:6px;font-size:13px">
-        <option value="local" selected>Local folder ./images</option>
-        <option value="proxy">Web proxy (needs internet)</option>
+        <option value="hosted" selected>My hosted images (recommended)</option>
+        <option value="local">Local folder ./images (offline)</option>
+        <option value="proxy">Web proxy</option>
         <option value="custom">Custom host URL&hellip;</option>
         <option value="direct">Direct imgur</option>
       </select>
@@ -141,15 +142,19 @@ const IMG_PROXIES = [
   u => 'https://images.weserv.nl/?url=' + encodeURIComponent(u.replace(/^https?:\/\//,'')),
   u => u
 ];
+// Absolute home of the downloaded images (GitHub Pages). Using an absolute URL means
+// the app works identically wherever it's embedded (GitHub, drjonesphysics, local file).
+const IMG_HOST = 'https://hookean1-dotcom.github.io/mcq-builder/images/';
 function fileName(u){ return u.split('/').pop(); }          // e.g. 4XqUWWs.gif
-function imgMode(){ return (document.getElementById('imgMode')||{}).value || 'proxy'; }
+function imgMode(){ return (document.getElementById('imgMode')||{}).value || 'hosted'; }
 function imgBase(){ return ((document.getElementById('imgBase')||{}).value||'').trim().replace(/\/+$/,''); }
 function imgSrc(u){
   const m = imgMode();
-  if(m==='local')  return 'images/' + fileName(u);
+  if(m==='hosted') return IMG_HOST + fileName(u);           // absolute GitHub Pages URL (default)
+  if(m==='local')  return 'images/' + fileName(u);          // relative - offline / same-folder use
   if(m==='custom') return (imgBase()||'.') + '/' + fileName(u);
   if(m==='direct') return u;
-  return IMG_PROXIES[0](u);                                  // proxy (default)
+  return IMG_PROXIES[0](u);                                  // proxy
 }
 function imgFallback(el){
   const raw = el.dataset.raw;
