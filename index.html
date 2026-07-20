@@ -312,7 +312,7 @@ function exportBooklet(kind){
     let b="<h1>A-Level Physics &mdash; Question Booklet</h1><p class='lead'>"+QUIZ.length+" questions &middot; generated "+stamp()+"</p>";
     QUIZ.forEach((q,i)=>{
       b+="<div class='q'><p class='qn'>Question "+(i+1)+srcTag(q)+"</p>";
-      if(q.img){ b+="<p><img src='"+imgSrc(q.img)+"'></p>"; }
+      if(q.img){ var _s=imgSrc(q.img); try{_s=new URL(_s,document.baseURI).href;}catch(e){} b+="<p><img src='"+_s+"'></p>"; }
       else{
         b+="<p class='qt'>"+esc(q.text).replace(/\n/g,'<br>')+"</p>";
         q.opts.forEach(o=>{ b+="<p class='opt'>"+esc(o)+"</p>"; });
